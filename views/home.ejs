@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+</head>
+<body>
+
+  <form action="/home" method="GET">
+    <input type="text" name="name" placeholder="Enter your name" required />
+    <button type="submit">Submit</button>
+  </form>
+
+  <% if (name) { %>
+    <h1>How are you <%= name %>?</h1>
+  <% } %>
+
+</body>
+</html>
