@@ -1,16 +1,27 @@
 import { getUser } from "../services/auth.js";
 
-async function restrictToLoggedinUserOnly(req, res, next ) {
-  const userUid = req.cookies?.uid;
-
-  if (!userUid) return res.redirect("/login");
-  const user = getUser(userUid);
-  if(!user) return res.redirect("/login");
-
+function checkForAuthentication(req, res, next) {
+  const tokenCookie = req.cookies?.token;
+  req.user = null;
+  if(!tokenCookie) 
+    return next();
+  const token = tokenCookie;
+  const user = getUser(token)
+  
   req.user = user;
-  next();
-}
 
+  return next();
+  
+}
+// now we are making function that give us role {admins, normal, etc}
+function restrictTo(roles=[]) {
+ return function(req, res, next) {
+  if(!req.user) return res.redirect("/login");
+  if(!roles.includes(req.user.role)) return res.end("UnAuthorized");
+ return next();
+ }
+ }
 export {
-  restrictToLoggedinUserOnly,
+  checkForAuthentication,
+  restrictTo
 }
